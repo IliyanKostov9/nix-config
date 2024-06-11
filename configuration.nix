@@ -1,3 +1,4 @@
+
 # Edit this configuration file to define what should be installed on your system.  Help is available in the configuration.nix(5) man page and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
@@ -53,8 +54,9 @@
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.ikostov2 = { isNormalUser = true; description = "ikostov2"; extraGroups = [ "networkmanager" "wheel" ]; packages = with pkgs; [
+    dbeaver-bin
+    microsoft-edge
     librewolf
-    git
     openvpn3
     rclone
     rclone-browser
@@ -69,9 +71,18 @@
     gpick
     neofetch
     xclip
+    vscodium
+    sdkmanager
+    azure-cli
+    awscli2
+    gh
+    git-extras
+    android-studio
     # Not sure about this one
     indicator-application-gtk3
     gnome.gnome-software
+    normcap
+    shotwell
     #gnome.gnome-tweaks
     gnomeExtensions.search-light
     gnomeExtensions.dock-from-dash
@@ -82,6 +93,13 @@
     gnomeExtensions.user-themes
     gnomeExtensions.paperwm
     p7zip
+    drawio
+    qemu
+    qFlipper
+    texstudio
+    inkscape
+    chromium
+    wineWowPackages.waylandFull
     ];
   };
 
@@ -94,20 +112,78 @@
   # Install firefox.
   programs.firefox.enable = true;
   programs.gpaste.enable = true;
- # programs.flameshot.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # List packages installed in system profile. To search, run: $ nix search wget
+    # List packages installed in system profile. To search, run: $ nix search wget
   environment.systemPackages = with pkgs; [
-   vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default. wget
+   git
+   zlib
+   bzip2
+   xz
+   openssl
+   readline
+   sqlite
+   tcl
+   tk
+   curl
+   libffi
+   gnumake
+   patch
+   libuuid
+   vim 
    neovim
    tmux
    libgccjit
+   glibc
    binutils
+   gcc
+   ncurses
+   #pyenv
+   python3
+   nodejs_22
+   jdk19
+   maven
+   gradle
+   kubectl
+   docker
+   terraform
+   kotlin
+   go
+   fzf
+   dotnetCorePackages.sdk_8_0_1xx
   ];
+ 
 
+ fonts.packages = with pkgs; [
+ (nerdfonts.override { fonts = ["0xProto"]; })
+ ];
+
+  
+
+environment.sessionVariables = {
+  PYENV_ROOT = "$HOME/.pyenv";
+  CPPFLAGS = "-I${pkgs.zlib.dev}/include -I${pkgs.libffi.dev}/include -I${pkgs.readline.dev}/include -I${pkgs.bzip2.dev}/include -I${pkgs.openssl.dev}/include";
+  CXXFLAGS = "-I${pkgs.zlib.dev}/include -I${pkgs.libffi.dev}/include -I${pkgs.readline.dev}/include -I${pkgs.bzip2.dev}/include -I${pkgs.openssl.dev}/include";
+  CFLAGS = "-I${pkgs.openssl.dev}/include";
+  LDFLAGS = "-L${pkgs.zlib.out}/lib -L${pkgs.libffi.out}/lib -L${pkgs.readline.out}/lib -L${pkgs.bzip2.out}/lib -L${pkgs.openssl.out}/lib";
+  PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
+  PYENV_VIRTUALENV_DISABLE_PROMPT = "1";
+};
+  
+      environment.variables = {
+    JAVA_HOME = "${pkgs.jdk}/lib/openjdk";
+    PATH = "${pkgs.jdk}/bin:" + builtins.getEnv "PATH";
+  };
+  
+    services.openvpn.servers = {
+    personalVPN  = {
+      config = "config /etc/nixos/config/openvpn/personalVPN.ovpn" ;
+      updateResolvConf = true;
+      autoStart = true;
+    };
+    };
   # Some programs need SUID wrappers, can be configured further or are started in user sessions. programs.mtr.enable = true; programs.gnupg.agent = {
   #   enable = true; enableSSHSupport = true;
   # };
