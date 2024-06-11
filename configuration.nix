@@ -119,6 +119,7 @@
       qFlipper
       texstudio
       inkscape
+      gitmoji-cli
       wineWowPackages.waylandFull
     ];
   };
@@ -174,7 +175,8 @@
     binutils
     gcc
     ncurses
-    pyenv
+    # broken: unable to install python
+    #pyenv
     python3
     nodejs_22
     jdk19
